@@ -64,8 +64,7 @@ export function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
+              <FormLabel>Email</FormLabel>              <FormControl>
                 <Input placeholder="name@example.com" {...field} />
               </FormControl>
               <FormMessage />
