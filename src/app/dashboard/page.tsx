@@ -121,7 +121,19 @@ export default function DashboardPage() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="sm:col-span-1 lg:col-span-2">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Today's Study Time</CardTitle>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">1.5 hours</div>
+                    <p className="text-xs text-muted-foreground">
+                      Keep up the great work!
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="lg:col-span-2">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Learning Streak</CardTitle>
                     <Flame className="h-4 w-4 text-muted-foreground" />
@@ -140,18 +152,7 @@ export default function DashboardPage() {
                     />
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Days</CardTitle>
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">23 days</div>
-                    <p className="text-xs text-muted-foreground">
-                      This month
-                    </p>
-                  </CardContent>
-                </Card>
+                
                 <Card className="sm:col-span-2 lg:col-span-4">
                   <CardHeader>
                     <CardTitle>Time Spent on Skills</CardTitle>
@@ -209,12 +210,6 @@ export default function DashboardPage() {
               <CardFooter className="flex justify-end gap-2">
                 <Button variant="outline" asChild>
                   <Link href="/dashboard/goals">Adjust Goals</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/dashboard/assessment">
-                    <Rocket className="mr-2" />
-                    Start Assessment
-                  </Link>
                 </Button>
               </CardFooter>
             </Card>
