@@ -81,7 +81,7 @@ export default function CoursePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Youtube className="text-red-500" />
-                Recommended Videos
+                Top Video Recommendations
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
