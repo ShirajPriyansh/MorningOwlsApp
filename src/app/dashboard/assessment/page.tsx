@@ -63,15 +63,6 @@ export default function AssessmentPage() {
   };
 
   const handleSubmit = async () => {
-    if (Object.keys(userAnswers).length !== assessment?.questions.length) {
-      toast({
-        title: 'Incomplete Assessment',
-        description: 'Please answer all questions before submitting.',
-        variant: 'destructive'
-      });
-      return;
-    }
-    
     setIsSubmitting(true);
     let correctAnswers = 0;
     assessment?.questions.forEach((q, index) => {
