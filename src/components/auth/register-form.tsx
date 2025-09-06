@@ -51,7 +51,7 @@ export function RegisterForm() {
         title: "Registration Successful",
         description: "Let's set up your learning goals!",
       });
-      router.push("/dashboard/goals");
+      router.push("/onboarding");
     }, 1000);
   }
 

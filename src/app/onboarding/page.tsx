@@ -33,13 +33,15 @@ import {
 } from '@/components/ui/card';
 import { Loader2, Sparkles, Check, Wand2 } from 'lucide-react';
 import { generateLearningPlan, type LearningPlanInput } from '@/ai/flows/learning-plan-flow';
-import { generateSkillKeywords } from '@/ai/flows/skill-keywords-flow';
+import { generateSkillKeywords, type SkillKeywordsInput } from '@/ai/flows/skill-keywords-flow';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
+import { GraduationCap } from 'lucide-react';
 
 const learningStyles = [
   { id: 'visual', label: 'Visual (videos, diagrams)' },
@@ -61,12 +63,11 @@ const goalsSchema = z.object({
 
 type GoalsFormValues = z.infer<typeof goalsSchema>;
 
-export default function GoalsPage() {
+export default function OnboardingPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
-  const [hasGoals, setHasGoals] = useState(false);
 
   const form = useForm<GoalsFormValues>({
     resolver: zodResolver(goalsSchema),
@@ -82,12 +83,9 @@ export default function GoalsPage() {
   useEffect(() => {
     const savedGoals = localStorage.getItem('learning_goals');
     if (savedGoals) {
-      form.reset(JSON.parse(savedGoals));
-      setHasGoals(true);
-    } else {
-      router.replace('/onboarding');
+      router.push('/dashboard');
     }
-  }, [form, router]);
+  }, [router]);
   
   const handleSuggestSkills = async () => {
     const careerGoal = form.getValues('careerGoal');
@@ -115,19 +113,17 @@ export default function GoalsPage() {
     }
   };
 
-
   async function onSubmit(values: GoalsFormValues) {
     setIsLoading(true);
     try {
       localStorage.setItem('learning_goals', JSON.stringify(values));
-      setHasGoals(true);
       
       const plan = await generateLearningPlan(values as LearningPlanInput);
       localStorage.setItem('learning_plan', JSON.stringify(plan));
       
       toast({
-        title: 'Learning Plan Updated!',
-        description: 'Your personalized learning path has been regenerated.',
+        title: 'Learning Plan Generated!',
+        description: 'Your personalized learning path is ready.',
       });
       router.push('/dashboard');
     } catch (error) {
@@ -143,14 +139,19 @@ export default function GoalsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-2xl mx-auto">
+     <div className="flex flex-col items-center min-h-screen justify-center p-4 sm:p-6 lg:p-8 bg-background">
+       <div className="w-full max-w-2xl mx-auto">
+         <div className="flex justify-center mb-6">
+          <Link href="/" className="flex items-center gap-2 text-primary">
+            <GraduationCap className="w-8 h-8" />
+            <span className="text-2xl font-bold font-headline">SkillUp</span>
+          </Link>
+        </div>
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Your Learning Goals</CardTitle>
+            <CardTitle>Welcome to SkillUp!</CardTitle>
             <CardDescription>
-              Tell us about your aspirations so we can tailor your learning
-              journey.
+              Let's set up your learning goals to personalize your journey.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -217,7 +218,7 @@ export default function GoalsPage() {
                         </div>
                       </FormControl>
                       <FormDescription>
-                         List skills you have, or let AI suggest some based on your goal.
+                        List skills you have, or let AI suggest some based on your goal.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -326,7 +327,7 @@ export default function GoalsPage() {
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-4 w-4" />
-                      {hasGoals ? 'Update & Regenerate Plan' : 'Generate My Learning Plan'}
+                      Generate My Learning Plan
                     </>
                   )}
                 </Button>
