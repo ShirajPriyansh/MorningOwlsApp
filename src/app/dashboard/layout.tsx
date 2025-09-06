@@ -16,7 +16,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, Goal, GraduationCap, ShieldCheck, FileText } from 'lucide-react';
+import { Home, LogOut, Goal, GraduationCap, ShieldCheck, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({
@@ -78,6 +78,18 @@ export default function DashboardLayout({
                 <Link href="/dashboard/course">
                   <GraduationCap />
                   <span>My Course</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith('/dashboard/community')}
+                tooltip="Community"
+              >
+                <Link href="/dashboard/community">
+                  <Users />
+                  <span>Community</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
