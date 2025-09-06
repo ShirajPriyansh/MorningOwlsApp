@@ -21,6 +21,7 @@ import {
   Rocket,
   Activity,
   Calendar,
+  Flame,
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -97,7 +98,7 @@ export default function DashboardPage() {
                   Here's a look at your learning activity.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-4 sm:grid-cols-3">
+              <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Study Time</CardTitle>
@@ -107,6 +108,18 @@ export default function DashboardPage() {
                     <div className="text-2xl font-bold">35 hours</div>
                     <p className="text-xs text-muted-foreground">
                       Across all skills
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
+                    <Flame className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">5 days</div>
+                    <p className="text-xs text-muted-foreground">
+                      Keep it going!
                     </p>
                   </CardContent>
                 </Card>
@@ -134,7 +147,7 @@ export default function DashboardPage() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="sm:col-span-3">
+                <Card className="sm:col-span-2 lg:col-span-4">
                   <CardHeader>
                     <CardTitle>Time Spent on Skills</CardTitle>
                   </CardHeader>
