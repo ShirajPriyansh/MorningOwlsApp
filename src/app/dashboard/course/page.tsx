@@ -11,22 +11,6 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import Image from 'next/image';
 
-function getYouTubeVideoId(url: string) {
-    let videoId = '';
-    try {
-        const urlObj = new URL(url);
-        if (urlObj.hostname === 'youtu.be') {
-            videoId = urlObj.pathname.slice(1);
-        } else if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
-            videoId = urlObj.searchParams.get('v') || '';
-        }
-    } catch (error) {
-        console.error("Invalid URL for YouTube thumbnail", error);
-        return null;
-    }
-    return videoId;
-}
-
 export default function CoursePage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -100,29 +84,22 @@ export default function CoursePage() {
                 Recommended Videos
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {courseContent.videos.map((video, index) => {
-                const videoId = getYouTubeVideoId(video.url);
-                const thumbnailUrl = videoId 
-                    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` 
-                    : 'https://picsum.photos/480/360';
-                
-                return (
-                    <a href={video.url} target="_blank" rel="noopener noreferrer" key={index} className="group block">
-                    <Card className="overflow-hidden h-full flex flex-col">
-                        <div className="relative aspect-video">
-                            <Image src={thumbnailUrl} alt={video.title} fill className="object-cover transition-transform group-hover:scale-105" data-ai-hint="youtube thumbnail" />
-                        </div>
-                        <CardHeader>
-                        <CardTitle className="text-base group-hover:text-primary transition-colors">{video.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                        <p className="text-sm text-muted-foreground line-clamp-3">{video.description}</p>
-                        </CardContent>
+            <CardContent className="space-y-4">
+              {courseContent.videos.map((video, index) => (
+                 <a href={video.url} target="_blank" rel="noopener noreferrer" key={index} className="group block">
+                    <Card className="hover:bg-muted/50 transition-colors">
+                      <CardContent className="p-4 flex items-start gap-4">
+                          <div className="bg-primary/10 text-primary p-2 rounded-lg">
+                            <Youtube className="w-5 h-5 text-red-500" />
+                          </div>
+                          <div>
+                            <p className="font-semibold group-hover:text-primary transition-colors">{video.title}</p>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{video.description}</p>
+                          </div>
+                      </CardContent>
                     </Card>
-                    </a>
-                )
-              })}
+                 </a>
+              ))}
             </CardContent>
           </Card>
           
