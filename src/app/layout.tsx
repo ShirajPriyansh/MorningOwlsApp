@@ -1,10 +1,11 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'AuthGate',
-  description: 'Secure and seamless authentication.',
+  title: 'SkillUp',
+  description: 'Your personalized micro-learning engine.',
 };
 
 export default function RootLayout({
@@ -30,7 +31,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body antialiased h-full">
+      <body className="font-body antialiased h-full bg-background">
         {children}
         <Toaster />
       </body>

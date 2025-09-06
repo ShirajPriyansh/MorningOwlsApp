@@ -1,6 +1,7 @@
+
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { ShieldCheck } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 type AuthLayoutProps = {
@@ -15,8 +16,8 @@ export default function AuthLayout({ title, description, children }: AuthLayoutP
       <div className="w-full max-w-md mx-auto">
         <div className="flex justify-center mb-6">
           <Link href="/" className="flex items-center gap-2 text-primary">
-            <ShieldCheck className="w-8 h-8" />
-            <span className="text-2xl font-bold font-headline">AuthGate</span>
+            <GraduationCap className="w-8 h-8" />
+            <span className="text-2xl font-bold font-headline">SkillUp</span>
           </Link>
         </div>
         <Card className="shadow-xl bg-card">

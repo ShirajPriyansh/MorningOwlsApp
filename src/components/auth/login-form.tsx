@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -45,20 +46,13 @@ export function LoginForm() {
 
     // Mock API call to simulate authentication
     setTimeout(() => {
-      if (
-        (values.email === "learner@authgate.com" && values.password === "password")
-      ) {
-        const role = 'learner';
-        localStorage.setItem("user_session", JSON.stringify({ email: values.email, role }));
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-        });
-        router.push("/dashboard");
-      } else {
-        setError("Invalid email or password. Please try again.");
-        setIsLoading(false);
-      }
+      // For this demo, any login is successful
+      localStorage.setItem("user_session", JSON.stringify({ email: values.email }));
+      toast({
+        title: "Login Successful",
+        description: "Welcome back!",
+      });
+      router.push("/dashboard");
     }, 1000);
   }
 
