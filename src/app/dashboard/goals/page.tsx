@@ -241,7 +241,7 @@ export default function GoalsPage() {
                                     <CommandItem
                                       key={style.id}
                                       onSelect={() => {
-                                        const currentValues = field.value || [];
+                                        const currentValues = Array.isArray(field.value) ? field.value : [];
                                         const newValue = currentValues.includes(style.id)
                                           ? currentValues.filter((s) => s !== style.id)
                                           : [...currentValues, style.id];
