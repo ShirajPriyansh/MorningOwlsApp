@@ -20,11 +20,12 @@ import {
   Loader2,
   Rocket,
   Activity,
-  Calendar,
+  Calendar as CalendarIcon,
   Flame,
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Calendar } from '@/components/ui/calendar';
 
 type LearningStep = {
   title: string;
@@ -57,6 +58,15 @@ export default function DashboardPage() {
   const router = useRouter();
   const [learningPlan, setLearningPlan] = useState<LearningPlan | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [streakDays, setStreakDays] = useState<Date[]>(() => {
+    const today = new Date();
+    return [
+        new Date(today.setDate(today.getDate() - 1)),
+        new Date(today.setDate(today.getDate() - 1)),
+        new Date(today.setDate(today.getDate() - 2)),
+        new Date(today.setDate(today.getDate() - 1)),
+    ]
+  });
 
   useEffect(() => {
     const session = localStorage.getItem('user_session');
@@ -111,28 +121,23 @@ export default function DashboardPage() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="sm:col-span-1 lg:col-span-2">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
+                    <CardTitle className="text-sm font-medium">Learning Streak</CardTitle>
                     <Flame className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">5 days</div>
-                    <p className="text-xs text-muted-foreground">
-                      Keep it going!
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Daily Average</CardTitle>
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">1.5 hours</div>
-                    <p className="text-xs text-muted-foreground">
-                      Based on your activity this month
-                    </p>
+                  <CardContent className="flex justify-center">
+                    <Calendar
+                        mode="multiple"
+                        selected={streakDays}
+                        className="p-0"
+                        classNames={{
+                            head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+                            cell: "h-8 w-8 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                            day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+                            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground"
+                        }}
+                    />
                   </CardContent>
                 </Card>
                 <Card>
@@ -208,7 +213,7 @@ export default function DashboardPage() {
                 <Button asChild>
                   <Link href="/dashboard/assessment">
                     <Rocket className="mr-2" />
-                    Start Learning
+                    Start Assessment
                   </Link>
                 </Button>
               </CardFooter>
