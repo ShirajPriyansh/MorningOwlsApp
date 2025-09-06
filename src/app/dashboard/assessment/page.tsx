@@ -185,7 +185,7 @@ export default function AssessmentPage() {
             <Button asChild>
                 <Link href="/dashboard">
                   <Rocket className="mr-2" />
-                  Back to Learning Path
+                  Back to Dashboard
                 </Link>
             </Button>
           </CardFooter>

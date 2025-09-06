@@ -19,7 +19,11 @@ import {
   GraduationCap,
   Loader2,
   Rocket,
+  Activity,
+  Calendar,
 } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 type LearningStep = {
   title: string;
@@ -31,6 +35,21 @@ type LearningPlan = {
   title: string;
   description: string;
   steps: LearningStep[];
+};
+
+const chartData = [
+  { skill: 'HTML/CSS', hours: 4 },
+  { skill: 'JavaScript', hours: 8 },
+  { skill: 'React', hours: 12 },
+  { skill: 'Next.js', hours: 6 },
+  { skill: 'Genkit', hours: 5 },
+];
+
+const chartConfig = {
+  hours: {
+    label: "Hours",
+    color: "hsl(var(--primary))",
+  },
 };
 
 export default function DashboardPage() {
@@ -70,48 +89,118 @@ export default function DashboardPage() {
         </p>
 
         {learningPlan ? (
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <GraduationCap className="w-6 h-6" />
-                {learningPlan.title}
-              </CardTitle>
-              <CardDescription>{learningPlan.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {learningPlan.steps.map((step, index) => (
-                <div key={index} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground">
-                      {index + 1}
-                    </div>
-                    {index < learningPlan.steps.length - 1 && (
-                      <div className="w-px h-full bg-border" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" />
-                      {step.duration}
+          <div className="space-y-8">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Progress Overview</CardTitle>
+                <CardDescription>
+                  Here's a look at your learning activity.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 sm:grid-cols-3">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Study Time</CardTitle>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">35 hours</div>
+                    <p className="text-xs text-muted-foreground">
+                      Across all skills
                     </p>
-                    <p className="mt-1">{step.description}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Daily Average</CardTitle>
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">1.5 hours</div>
+                    <p className="text-xs text-muted-foreground">
+                      Based on your activity this month
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Active Days</CardTitle>
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">23 days</div>
+                    <p className="text-xs text-muted-foreground">
+                      This month
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="sm:col-span-3">
+                  <CardHeader>
+                    <CardTitle>Time Spent on Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <ChartContainer config={chartConfig} className="h-64 w-full">
+                       <BarChart accessibilityLayer data={chartData}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                          dataKey="skill"
+                          tickLine={false}
+                          tickMargin={10}
+                          axisLine={false}
+                        />
+                        <YAxis />
+                        <Tooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="hours" fill="hsl(var(--primary))" radius={4} />
+                      </BarChart>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <GraduationCap className="w-6 h-6" />
+                  {learningPlan.title}
+                </CardTitle>
+                <CardDescription>{learningPlan.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {learningPlan.steps.map((step, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground">
+                        {index + 1}
+                      </div>
+                      {index < learningPlan.steps.length - 1 && (
+                        <div className="w-px h-full bg-border" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        {step.duration}
+                      </p>
+                      <p className="mt-1">{step.description}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-            <CardFooter className="flex justify-end gap-2">
-               <Button variant="outline" asChild>
-                <Link href="/dashboard/goals">Adjust Goals</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/dashboard/assessment">
-                  <Rocket className="mr-2" />
-                  Start Learning
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
+                ))}
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2">
+                <Button variant="outline" asChild>
+                  <Link href="/dashboard/goals">Adjust Goals</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/dashboard/assessment">
+                    <Rocket className="mr-2" />
+                    Take Assessment
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
         ) : (
           <Card className="shadow-lg text-center">
             <CardHeader>
