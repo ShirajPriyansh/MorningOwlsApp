@@ -49,11 +49,11 @@ export default function DashboardLayout({
               <SidebarMenuButton
                 asChild
                 isActive={pathname === '/dashboard'}
-                tooltip="Learning Path"
+                tooltip="My Progress"
               >
                 <Link href="/dashboard">
                   <Home />
-                  <span>Learning Path</span>
+                  <span>My Progress</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
