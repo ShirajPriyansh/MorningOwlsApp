@@ -20,7 +20,7 @@ export type AssessmentInput = z.infer<typeof AssessmentInputSchema>;
 
 const QuestionSchema = z.object({
   question: z.string().describe('The question text.'),
-  options: z.array(z.string()).describe('An array of 4 possible answers.'),
+  options: z.array(z.string()).describe('An array of 5 possible answers, where one is "Don\'t know".'),
   answer: z.string().describe('The correct answer from the options.'),
   explanation: z.string().describe('A brief explanation for the correct answer.'),
 });
@@ -41,7 +41,7 @@ const prompt = ai.definePrompt({
   output: { schema: AssessmentOutputSchema },
   prompt: `You are an expert in creating educational assessments. Generate a 5-question multiple-choice quiz to evaluate a user's baseline knowledge for their stated career goal.
 
-The questions should be suitable for a beginner and cover fundamental concepts related to the user's goal and existing skills. For each question, provide 4 options, one correct answer, and a brief explanation for the answer.
+The questions should be suitable for a beginner and cover fundamental concepts related to the user's goal and existing skills. For each question, provide 4 options, one correct answer, a brief explanation for the answer, and a final option which is always "Don't know".
 
 **User Profile:**
 - **Career Goal:** {{{careerGoal}}}

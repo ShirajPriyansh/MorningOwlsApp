@@ -233,7 +233,7 @@ export default function AssessmentPage() {
             ))}
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button onClick={handleSubmit} disabled={isSubmitting}>
+            <Button onClick={handleSubmit} disabled={isSubmitting || Object.keys(userAnswers).length !== assessment.questions.length}>
                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Submit Answers
             </Button>
