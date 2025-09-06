@@ -41,8 +41,26 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { GraduationCap } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+
+const OwlIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        {...props}
+    >
+        <path d="M14.5 13c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
+        <path d="M9.5 13c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
+        <path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/>
+        <path d="M12 15c-3 0-5.5 2.5-5.5 5.5"/>
+    </svg>
+);
+
 
 const learningStyles = [
   { id: 'visual', label: 'Visual (videos, diagrams)' },
@@ -154,13 +172,13 @@ export default function OnboardingPage() {
        <div className="w-full max-w-2xl mx-auto">
          <div className="flex justify-center mb-6">
           <Link href="/" className="flex items-center gap-2 text-primary">
-            <GraduationCap className="w-8 h-8" />
-            <span className="text-2xl font-bold font-headline">SkillUp</span>
+            <OwlIcon className="w-8 h-8" />
+            <span className="text-2xl font-bold font-headline">Morning_Owls</span>
           </Link>
         </div>
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Welcome to SkillUp!</CardTitle>
+            <CardTitle>Welcome to Morning_Owls!</CardTitle>
             <CardDescription>
               Let's set up your learning goals to personalize your journey.
             </CardDescription>
