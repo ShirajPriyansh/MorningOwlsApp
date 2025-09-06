@@ -11,7 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const CourseContentInputSchema = z.object({
+const CourseContentInputSchema = z.object({
   careerGoal: z.string().describe("The user's primary career goal."),
   currentSkills: z.string().describe("The user's current skills."),
 });
@@ -28,7 +28,7 @@ const WebResourceSchema = z.object({
   url: z.string().url().describe('The full URL of the resource.'),
 });
 
-export const CourseContentOutputSchema = z.object({
+const CourseContentOutputSchema = z.object({
   title: z.string().describe('A title for the course content page.'),
   description: z.string().describe('A brief, encouraging description of the learning materials.'),
   videos: z.array(VideoResourceSchema).describe('An array of 3 relevant YouTube video recommendations.'),
