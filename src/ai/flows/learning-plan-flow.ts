@@ -13,7 +13,7 @@ import { z } from 'genkit';
 
 const LearningPlanInputSchema = z.object({
   careerGoal: z.string().describe('The user\'s primary career goal, e.g., "Become a full-stack developer".'),
-  profession: z.string().describe("The user's current profession."),
+  profession: z.array(z.string()).describe("The user's current profession(s)."),
   skillLevel: z.enum(['beginner', 'intermediate', 'advanced']).describe('The user\'s current skill level.'),
   learningStyle: z.array(z.string()).describe('The user\'s preferred learning styles.'),
   currentSkills: z.string().describe('A list of the user\'s current relevant skills, e.g., "HTML, CSS, basic JavaScript".'),
@@ -49,7 +49,7 @@ Keep the learning plan concise and motivational. Generate 3 to 5 clear steps.
 
 **User Profile:**
 - **Career Goal:** {{{careerGoal}}}
-- **Current Profession:** {{{profession}}}
+- **Current Profession(s):** {{#each profession}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 - **Current Skills:** {{{currentSkills}}}
 - **Skill Level:** {{{skillLevel}}}
 - **Preferred Learning Style(s):** {{#each learningStyle}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}

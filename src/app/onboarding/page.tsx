@@ -42,6 +42,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { GraduationCap } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const learningStyles = [
   { id: 'visual', label: 'Visual (videos, diagrams)' },
@@ -50,10 +51,20 @@ const learningStyles = [
   { id: 'kinesthetic', label: 'Kinesthetic (hands-on projects)' },
 ] as const;
 
+const professions = [
+    { id: 'student', label: 'Student' },
+    { id: 'software-engineer', label: 'Software Engineer' },
+    { id: 'designer', label: 'Designer' },
+    { id: 'product-manager', label: 'Product Manager' },
+    { id: 'other', label: 'Other' },
+] as const;
+
 
 const goalsSchema = z.object({
   careerGoal: z.string().min(5, 'Please describe your career goal in more detail.'),
-  profession: z.string().min(2, 'Please enter a valid profession.'),
+  profession: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'You have to select at least one profession.',
+  }),
   skillLevel: z.enum(['beginner', 'intermediate', 'advanced']),
   learningStyle: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one learning style.',
@@ -73,7 +84,7 @@ export default function OnboardingPage() {
     resolver: zodResolver(goalsSchema),
     defaultValues: {
       careerGoal: '',
-      profession: '',
+      profession: [],
       skillLevel: 'beginner',
       learningStyle: [],
       currentSkills: '',
@@ -174,18 +185,50 @@ export default function OnboardingPage() {
                   )}
                 />
                 
-                <FormField
+                 <FormField
                   control={form.control}
                   name="profession"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
-                      <FormLabel>What is your current profession?</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Student, Software Engineer" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Your profession provides context for your learning goals.
-                      </FormDescription>
+                        <div className="mb-4">
+                            <FormLabel>What is your current profession?</FormLabel>
+                             <FormDescription>
+                                Select all that apply.
+                              </FormDescription>
+                        </div>
+                      {professions.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="profession"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...(field.value || []), item.id])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
                       <FormMessage />
                     </FormItem>
                   )}
