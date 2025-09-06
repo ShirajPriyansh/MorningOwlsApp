@@ -90,7 +90,7 @@ function GoalsDisplay({ goals, onEdit }: { goals: GoalsFormValues, onEdit: () =>
                  <div className="space-y-2">
                     <h3 className="font-semibold flex items-center gap-2"><Briefcase /> Profession(s)</h3>
                     <div className="flex flex-wrap gap-2">
-                        {goals.profession.map(p => {
+                        {Array.isArray(goals.profession) && goals.profession.map(p => {
                             const profession = professions.find(item => item.id === p);
                             return <Badge key={p} variant="secondary">{profession?.label || p}</Badge>
                         })}
@@ -421,9 +421,11 @@ export default function GoalsPage() {
                 />
                 
                 <div className="flex justify-end gap-2">
-                    <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} disabled={isLoading}>
-                        Cancel
-                    </Button>
+                    {savedGoals.careerGoal && (
+                        <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} disabled={isLoading}>
+                            Cancel
+                        </Button>
+                    )}
                     <Button type="submit" disabled={isLoading}>
                       {isLoading ? (
                         <>
@@ -447,4 +449,3 @@ export default function GoalsPage() {
     </div>
   );
 }
-
