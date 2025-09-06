@@ -44,14 +44,14 @@ export function RegisterForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // Mock API call to simulate registration
+    // Mock API call to simulate registration and login
     setTimeout(() => {
-      console.log("Registered user:", {...values, role: 'learner'});
+      localStorage.setItem("user_session", JSON.stringify({ email: values.email }));
       toast({
         title: "Registration Successful",
-        description: "You can now log in with your new account.",
+        description: "Let's set up your learning goals!",
       });
-      router.push("/login");
+      router.push("/dashboard/goals");
     }, 1000);
   }
 
