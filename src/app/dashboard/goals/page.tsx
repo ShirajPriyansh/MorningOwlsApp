@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -28,11 +28,12 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, Sparkles, Check, Wand2 } from 'lucide-react';
+import { Loader2, Sparkles, Check, Wand2, Pencil, Briefcase, User, Target, Palette } from 'lucide-react';
 import { generateLearningPlan, type LearningPlanInput } from '@/ai/flows/learning-plan-flow';
 import { generateSkillKeywords } from '@/ai/flows/skill-keywords-flow';
 import { useRouter } from 'next/navigation';
@@ -72,12 +73,64 @@ const goalsSchema = z.object({
 
 type GoalsFormValues = z.infer<typeof goalsSchema>;
 
+function GoalsDisplay({ goals, onEdit }: { goals: GoalsFormValues, onEdit: () => void }) {
+    return (
+        <Card className="shadow-lg">
+            <CardHeader>
+                <CardTitle>Your Learning Goals</CardTitle>
+                <CardDescription>
+                    This is your current learning configuration. Click edit to make changes.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                 <div className="space-y-2">
+                    <h3 className="font-semibold flex items-center gap-2"><Target /> Career Goal</h3>
+                    <p className="text-muted-foreground">{goals.careerGoal}</p>
+                 </div>
+                 <div className="space-y-2">
+                    <h3 className="font-semibold flex items-center gap-2"><Briefcase /> Profession(s)</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {goals.profession.map(p => {
+                            const profession = professions.find(item => item.id === p);
+                            return <Badge key={p} variant="secondary">{profession?.label || p}</Badge>
+                        })}
+                    </div>
+                 </div>
+                 <div className="space-y-2">
+                    <h3 className="font-semibold flex items-center gap-2"><User /> Skill Level</h3>
+                    <p className="text-muted-foreground capitalize">{goals.skillLevel}</p>
+                 </div>
+                 <div className="space-y-2">
+                    <h3 className="font-semibold flex items-center gap-2"><Palette /> Preferred Learning Style(s)</h3>
+                     <div className="flex flex-wrap gap-2">
+                        {goals.learningStyle.map(ls => {
+                             const style = learningStyles.find(item => item.id === ls);
+                             return <Badge key={ls} variant="secondary">{style?.label || ls}</Badge>
+                        })}
+                    </div>
+                 </div>
+                 <div className="space-y-2">
+                    <h3 className="font-semibold flex items-center gap-2"><Sparkles /> Current Skills</h3>
+                    <p className="text-muted-foreground">{goals.currentSkills}</p>
+                 </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+                <Button onClick={onEdit}>
+                    <Pencil className="mr-2" />
+                    Edit Goals
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+}
+
+
 export default function GoalsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
-  const [hasGoals, setHasGoals] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const form = useForm<GoalsFormValues>({
     resolver: zodResolver(goalsSchema),
@@ -94,8 +147,9 @@ export default function GoalsPage() {
     const savedGoals = localStorage.getItem('learning_goals');
     if (savedGoals) {
       form.reset(JSON.parse(savedGoals));
-      setHasGoals(true);
     } else {
+      // If no goals, it must be a new user who somehow skipped onboarding.
+      // Redirect to onboarding to set initial goals.
       router.replace('/onboarding');
     }
   }, [form, router]);
@@ -131,7 +185,6 @@ export default function GoalsPage() {
     setIsLoading(true);
     try {
       localStorage.setItem('learning_goals', JSON.stringify(values));
-      setHasGoals(true);
       
       const plan = await generateLearningPlan(values as LearningPlanInput);
       localStorage.setItem('learning_plan', JSON.stringify(plan));
@@ -140,6 +193,7 @@ export default function GoalsPage() {
         title: 'Learning Plan Updated!',
         description: 'Your personalized learning path has been regenerated.',
       });
+      setIsEditing(false); // Exit edit mode
       router.push('/dashboard');
     } catch (error) {
       console.error('Failed to generate learning plan:', error);
@@ -153,12 +207,17 @@ export default function GoalsPage() {
     }
   }
 
+  const savedGoals = form.getValues();
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-2xl mx-auto">
+        {!isEditing && savedGoals.careerGoal ? (
+            <GoalsDisplay goals={savedGoals} onEdit={() => setIsEditing(true)} />
+        ) : (
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Your Learning Goals</CardTitle>
+            <CardTitle>Update Your Learning Goals</CardTitle>
             <CardDescription>
               Tell us about your aspirations so we can tailor your learning
               journey.
@@ -361,24 +420,31 @@ export default function GoalsPage() {
                   )}
                 />
                 
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating Your Plan...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      {hasGoals ? 'Update & Regenerate Plan' : 'Generate My Learning Plan'}
-                    </>
-                  )}
-                </Button>
+                <div className="flex justify-end gap-2">
+                    <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} disabled={isLoading}>
+                        Cancel
+                    </Button>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Save & Regenerate Plan
+                        </>
+                      )}
+                    </Button>
+                </div>
               </form>
             </Form>
           </CardContent>
         </Card>
+        )}
       </div>
     </div>
   );
 }
+
