@@ -149,7 +149,9 @@ export default function GoalsPage() {
     if (savedGoals) {
       form.reset(JSON.parse(savedGoals));
     } else {
-      router.replace('/onboarding');
+        // If no goals are found, we assume it's a new user or they cleared their data.
+        // Onboarding is the right place to start from.
+        setIsEditing(true);
     }
     setHasLoaded(true);
   }, [form, router]);

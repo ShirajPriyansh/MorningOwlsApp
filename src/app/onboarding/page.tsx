@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/card';
 import { Loader2, Sparkles, Check, Wand2 } from 'lucide-react';
 import { generateLearningPlan, type LearningPlanInput } from '@/ai/flows/learning-plan-flow';
-import { generateSkillKeywords, type SkillKeywordsInput } from '@/ai/flows/skill-keywords-flow';
+import { generateSkillKeywords } from '@/ai/flows/skill-keywords-flow';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
