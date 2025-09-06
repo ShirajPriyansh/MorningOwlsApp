@@ -104,9 +104,11 @@ export default function DashboardPage() {
                <Button variant="outline" asChild>
                 <Link href="/dashboard/goals">Adjust Goals</Link>
               </Button>
-              <Button>
-                <Rocket className="mr-2" />
-                Start Learning
+              <Button asChild>
+                <Link href="/dashboard/assessment">
+                  <Rocket className="mr-2" />
+                  Start Learning
+                </Link>
               </Button>
             </CardFooter>
           </Card>
