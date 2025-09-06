@@ -212,7 +212,7 @@ export default function DashboardPage() {
                   <Link href="/dashboard/goals">Adjust Goals</Link>
                 </Button>
                 <Button asChild>
-                    <Link href="/dashboard/assessment">
+                    <Link href="/dashboard/course">
                         <Rocket className="mr-2" />
                         Continue Learning
                     </Link>
