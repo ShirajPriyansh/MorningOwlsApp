@@ -195,7 +195,7 @@ export default function DashboardPage() {
                 <Button asChild>
                   <Link href="/dashboard/assessment">
                     <Rocket className="mr-2" />
-                    Take Assessment
+                    Start Learning
                   </Link>
                 </Button>
               </CardFooter>
