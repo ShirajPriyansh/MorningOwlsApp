@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -91,13 +91,6 @@ export default function OnboardingPage() {
     },
   });
 
-  useEffect(() => {
-    const savedGoals = localStorage.getItem('learning_goals');
-    if (savedGoals) {
-      router.push('/dashboard');
-    }
-  }, [router]);
-  
   const handleSuggestSkills = async () => {
     const careerGoal = form.getValues('careerGoal');
     if (!careerGoal || careerGoal.length < 5) {
