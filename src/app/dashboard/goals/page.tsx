@@ -220,7 +220,7 @@ export default function GoalsPage() {
                                 )}
                               >
                                 <div className="flex gap-1 flex-wrap">
-                                  {field.value?.length > 0 ?
+                                  {Array.isArray(field.value) && field.value?.length > 0 ?
                                    field.value.map(styleId => {
                                       const style = learningStyles.find(s => s.id === styleId);
                                       return <Badge key={styleId} variant="secondary">{style?.label}</Badge>;
