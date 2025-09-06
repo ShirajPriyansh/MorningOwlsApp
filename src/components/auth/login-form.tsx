@@ -46,10 +46,9 @@ export function LoginForm() {
     // Mock API call to simulate authentication
     setTimeout(() => {
       if (
-        (values.email === "admin@authgate.com" && values.password === "password") ||
         (values.email === "learner@authgate.com" && values.password === "password")
       ) {
-        const role = values.email.startsWith('admin') ? 'admin' : 'learner';
+        const role = 'learner';
         localStorage.setItem("user_session", JSON.stringify({ email: values.email, role }));
         toast({
           title: "Login Successful",

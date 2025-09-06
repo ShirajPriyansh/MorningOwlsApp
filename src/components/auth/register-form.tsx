@@ -17,14 +17,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   confirmPassword: z.string(),
-  role: z.enum(["learner", "admin"], { required_error: "You need to select a role."}),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match.",
   path: ["confirmPassword"],
@@ -41,7 +39,6 @@ export function RegisterForm() {
       email: "",
       password: "",
       confirmPassword: "",
-      role: "learner",
     },
   });
 
@@ -49,7 +46,7 @@ export function RegisterForm() {
     setIsLoading(true);
     // Mock API call to simulate registration
     setTimeout(() => {
-      console.log("Registered user:", values);
+      console.log("Registered user:", {...values, role: 'learner'});
       toast({
         title: "Registration Successful",
         description: "You can now log in with your new account.",
@@ -95,40 +92,6 @@ export function RegisterForm() {
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem className="space-y-2">
-              <FormLabel>Select your role</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex gap-4 pt-1"
-                >
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="learner" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      Learner
-                    </FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="admin" />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      Administrator
-                    </FormLabel>
-                  </FormItem>
-                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>

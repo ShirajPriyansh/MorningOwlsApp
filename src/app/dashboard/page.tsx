@@ -9,7 +9,6 @@ import { ShieldCheck, User, LogOut } from "lucide-react";
 
 type UserSession = {
   email: string;
-  role: 'learner' | 'admin';
 };
 
 export default function DashboardPage() {
@@ -65,7 +64,6 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-2">
               <p><strong>Email:</strong> {user.email}</p>
-              <p><strong>Role:</strong> <span className="px-2 py-1 text-sm font-medium rounded-full bg-primary/10 text-primary capitalize">{user.role}</span></p>
             </CardContent>
           </Card>
         </div>
