@@ -103,7 +103,7 @@ function GoalsDisplay({ goals, onEdit }: { goals: GoalsFormValues, onEdit: () =>
                  <div className="space-y-2">
                     <h3 className="font-semibold flex items-center gap-2"><Palette /> Preferred Learning Style(s)</h3>
                      <div className="flex flex-wrap gap-2">
-                        {goals.learningStyle.map(ls => {
+                        {Array.isArray(goals.learningStyle) && goals.learningStyle.map(ls => {
                              const style = learningStyles.find(item => item.id === ls);
                              return <Badge key={ls} variant="secondary">{style?.label || ls}</Badge>
                         })}
@@ -131,6 +131,7 @@ export default function GoalsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const form = useForm<GoalsFormValues>({
     resolver: zodResolver(goalsSchema),
@@ -148,10 +149,9 @@ export default function GoalsPage() {
     if (savedGoals) {
       form.reset(JSON.parse(savedGoals));
     } else {
-      // If no goals, it must be a new user who somehow skipped onboarding.
-      // Redirect to onboarding to set initial goals.
       router.replace('/onboarding');
     }
+    setHasLoaded(true);
   }, [form, router]);
   
   const handleSuggestSkills = async () => {
@@ -208,6 +208,14 @@ export default function GoalsPage() {
   }
 
   const savedGoals = form.getValues();
+
+  if (!hasLoaded) {
+      return (
+        <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      )
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
