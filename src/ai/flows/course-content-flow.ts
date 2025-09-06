@@ -44,15 +44,17 @@ const prompt = ai.definePrompt({
   name: 'courseContentPrompt',
   input: { schema: CourseContentInputSchema },
   output: { schema: CourseContentOutputSchema },
-  prompt: `You are an expert instructional designer. A user wants to learn new skills to achieve a career goal. Generate a set of high-quality, relevant learning resources for them.
+  prompt: `You are an expert instructional designer and YouTube curator. A user wants to learn new skills to achieve a career goal. Your task is to find and recommend **real, existing, and highly-rated** learning resources.
 
-The user is looking for both video content and written materials. Find 3 YouTube videos and 3 web resources (articles, tutorials, documentation) that would be most helpful.
+For the video content, find 3 popular and well-regarded YouTube videos that are directly relevant to the user's goals. Ensure the URLs are valid and point to actual videos.
+
+For the web resources, find 3 high-quality articles, tutorials, or official documentation pages.
 
 **User Profile:**
 - **Career Goal:** {{{careerGoal}}}
 - **Current Skills:** {{{currentSkills}}}
 
-Generate a title and description for the course page, and provide the lists of video and web resources. For videos, include a short description. Ensure all URLs are valid.`,
+Generate a title and description for the course page, and provide the lists of video and web resources. For videos, include a short description. Double-check that all URLs are valid and lead to real, available content.`,
 });
 
 const courseContentFlow = ai.defineFlow(
