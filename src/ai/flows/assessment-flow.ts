@@ -14,6 +14,7 @@ import { z } from 'genkit';
 const AssessmentInputSchema = z.object({
   careerGoal: z.string().describe("The user's primary career goal."),
   currentSkills: z.string().describe("The user's current skills."),
+  profession: z.string().describe("The user's current profession."),
 });
 export type AssessmentInput = z.infer<typeof AssessmentInputSchema>;
 
@@ -44,6 +45,7 @@ The questions should be suitable for a beginner and cover fundamental concepts r
 
 **User Profile:**
 - **Career Goal:** {{{careerGoal}}}
+- **Current Profession:** {{{profession}}}
 - **Current Skills:** {{{currentSkills}}}
 
 Generate an assessment titled "Baseline Knowledge Check" with 5 questions.`,

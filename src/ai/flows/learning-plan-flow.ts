@@ -13,8 +13,9 @@ import { z } from 'genkit';
 
 const LearningPlanInputSchema = z.object({
   careerGoal: z.string().describe('The user\'s primary career goal, e.g., "Become a full-stack developer".'),
+  profession: z.string().describe("The user's current profession."),
   skillLevel: z.enum(['beginner', 'intermediate', 'advanced']).describe('The user\'s current skill level.'),
-  learningStyle: z.enum(['visual', 'auditory', 'reading/writing', 'kinesthetic']).describe('The user\'s preferred learning style.'),
+  learningStyle: z.array(z.string()).describe('The user\'s preferred learning styles.'),
   currentSkills: z.string().describe('A list of the user\'s current relevant skills, e.g., "HTML, CSS, basic JavaScript".'),
 });
 export type LearningPlanInput = z.infer<typeof LearningPlanInputSchema>;
@@ -48,11 +49,12 @@ Keep the learning plan concise and motivational. Generate 3 to 5 clear steps.
 
 **User Profile:**
 - **Career Goal:** {{{careerGoal}}}
+- **Current Profession:** {{{profession}}}
 - **Current Skills:** {{{currentSkills}}}
 - **Skill Level:** {{{skillLevel}}}
-- **Preferred Learning Style:** {{{learningStyle}}}
+- **Preferred Learning Style(s):** {{#each learningStyle}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 
-Based on this profile, generate a learning plan with a title, a brief description, and a series of actionable steps. For each step, provide a title, an estimated duration, and a short description. Tailor the content and recommended activities to the user's preferred learning style.`,
+Based on this profile, generate a learning plan with a title, a brief description, and a series of actionable steps. For each step, provide a title, an estimated duration, and a short description. Tailor the content and recommended activities to the user's preferred learning style(s).`,
 });
 
 const learningPlanFlow = ai.defineFlow(

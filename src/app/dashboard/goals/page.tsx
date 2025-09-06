@@ -31,15 +31,30 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, Check } from 'lucide-react';
 import { generateLearningPlan, type LearningPlanInput } from '@/ai/flows/learning-plan-flow';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+
+const learningStyles = [
+  { id: 'visual', label: 'Visual (videos, diagrams)' },
+  { id: 'auditory', label: 'Auditory (lectures, discussions)' },
+  { id: 'reading/writing', label: 'Reading/Writing (articles, notes)' },
+  { id: 'kinesthetic', label: 'Kinesthetic (hands-on projects)' },
+] as const;
+
 
 const goalsSchema = z.object({
   careerGoal: z.string().min(5, 'Please describe your career goal in more detail.'),
+  profession: z.string().min(2, 'Please enter a valid profession.'),
   skillLevel: z.enum(['beginner', 'intermediate', 'advanced']),
-  learningStyle: z.enum(['visual', 'auditory', 'reading/writing', 'kinesthetic']),
+  learningStyle: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'You have to select at least one learning style.',
+  }),
   currentSkills: z.string().min(3, 'Please list at least one current skill.'),
 });
 
@@ -55,8 +70,9 @@ export default function GoalsPage() {
     resolver: zodResolver(goalsSchema),
     defaultValues: {
       careerGoal: '',
+      profession: '',
       skillLevel: 'beginner',
-      learningStyle: 'visual',
+      learningStyle: [],
       currentSkills: '',
     },
   });
@@ -125,6 +141,23 @@ export default function GoalsPage() {
                     </FormItem>
                   )}
                 />
+                
+                <FormField
+                  control={form.control}
+                  name="profession"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>What is your current profession?</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Student, Software Engineer" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Your profession provides context for your learning goals.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -174,22 +207,65 @@ export default function GoalsPage() {
                   name="learningStyle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>What is your preferred learning style?</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your learning style" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="visual">Visual (videos, diagrams)</SelectItem>
-                          <SelectItem value="auditory">Auditory (lectures, discussions)</SelectItem>
-                          <SelectItem value="reading/writing">Reading/Writing (articles, notes)</SelectItem>
-                          <SelectItem value="kinesthetic">Kinesthetic (hands-on projects)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <FormLabel>Preferred learning style(s)</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                               <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "w-full justify-between h-auto",
+                                  !field.value?.length && "text-muted-foreground"
+                                )}
+                              >
+                                <div className="flex gap-1 flex-wrap">
+                                  {field.value?.length > 0 ?
+                                   field.value.map(styleId => {
+                                      const style = learningStyles.find(s => s.id === styleId);
+                                      return <Badge key={styleId} variant="secondary">{style?.label}</Badge>;
+                                   })
+                                   : "Select your learning styles"
+                                  }
+                                </div>
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0">
+                            <Command>
+                              <CommandInput placeholder="Search styles..." />
+                              <CommandList>
+                                <CommandEmpty>No results found.</CommandEmpty>
+                                <CommandGroup>
+                                  {learningStyles.map((style) => (
+                                    <CommandItem
+                                      key={style.id}
+                                      onSelect={() => {
+                                        const currentValues = field.value || [];
+                                        const newValue = currentValues.includes(style.id)
+                                          ? currentValues.filter((s) => s !== style.id)
+                                          : [...currentValues, style.id];
+                                        field.onChange(newValue);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          field.value?.includes(style.id)
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {style.label}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                        <FormDescription>
-                        We'll use this to recommend the best content format.
+                        Select one or more styles. We'll use this to recommend the best content format.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
