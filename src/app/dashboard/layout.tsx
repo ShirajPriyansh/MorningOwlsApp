@@ -69,18 +69,6 @@ export default function DashboardLayout({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === '/dashboard/assessment'}
-                tooltip="Assessment"
-              >
-                <Link href="/dashboard/assessment">
-                  <FileText />
-                  <span>Assessment</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>

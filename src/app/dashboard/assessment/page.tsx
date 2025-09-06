@@ -4,12 +4,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { generateAssessment, type AssessmentOutput, type AssessmentInput } from '@/ai/flows/assessment-flow';
+import { generateRecommendations, type RecommendationsOutput } from '@/ai/flows/recommendations-flow';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Loader2, Sparkles, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle, XCircle, Rocket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 type AnswerStatus = 'correct' | 'incorrect' | 'unanswered';
 
@@ -18,9 +20,11 @@ export default function AssessmentPage() {
   const { toast } = useToast();
   const [assessment, setAssessment] = useState<AssessmentOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [recommendations, setRecommendations] = useState<RecommendationsOutput | null>(null);
 
   useEffect(() => {
     const fetchAssessment = async () => {
@@ -58,7 +62,7 @@ export default function AssessmentPage() {
     setUserAnswers((prev) => ({ ...prev, [questionIndex]: answer }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (Object.keys(userAnswers).length !== assessment?.questions.length) {
       toast({
         title: 'Incomplete Assessment',
@@ -68,6 +72,7 @@ export default function AssessmentPage() {
       return;
     }
     
+    setIsSubmitting(true);
     let correctAnswers = 0;
     assessment?.questions.forEach((q, index) => {
       if (userAnswers[index] === q.answer) {
@@ -75,8 +80,31 @@ export default function AssessmentPage() {
       }
     });
 
-    setScore(correctAnswers);
+    const finalScore = correctAnswers;
+    setScore(finalScore);
     setSubmitted(true);
+
+    try {
+        const goals = localStorage.getItem('learning_goals');
+        if (goals && assessment) {
+            const parsedGoals: AssessmentInput = JSON.parse(goals);
+            const recommendations = await generateRecommendations({
+                careerGoal: parsedGoals.careerGoal,
+                score: finalScore,
+                assessmentTitle: assessment.title,
+            });
+            setRecommendations(recommendations);
+        }
+    } catch(error) {
+        console.error('Failed to generate recommendations:', error);
+        toast({
+            title: 'Error',
+            description: 'Could not generate recommendations. Please try again.',
+            variant: 'destructive',
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   const getAnswerStatus = (questionIndex: number, option: string): AnswerStatus => {
@@ -93,6 +121,7 @@ export default function AssessmentPage() {
     setUserAnswers({});
     setSubmitted(false);
     setScore(0);
+    setRecommendations(null);
     setIsLoading(true);
     const fetchAssessment = async () => {
       const goals = localStorage.getItem('learning_goals');
@@ -137,30 +166,36 @@ export default function AssessmentPage() {
           <CardHeader className="text-center">
             <CardTitle>Assessment Results</CardTitle>
             <CardDescription>
-              You scored {score} out of {assessment.questions.length}
+              You scored {score} out of {assessment.questions.length}. Here is what to focus on next.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-             {assessment.questions.map((q, index) => (
-              <div key={index} className="p-4 border rounded-lg">
-                <p className="font-semibold mb-2">{q.question}</p>
-                <p className="text-sm">
-                  <span className="font-bold">Your Answer: </span>
-                  <span className={userAnswers[index] === q.answer ? 'text-green-600' : 'text-red-600'}>
-                    {userAnswers[index]}
-                  </span>
-                </p>
-                 <p className="text-sm">
-                  <span className="font-bold">Correct Answer: </span>
-                  <span className="text-green-600">{q.answer}</span>
-                </p>
-                 <p className="text-sm text-muted-foreground mt-1">{q.explanation}</p>
-              </div>
-            ))}
+          <CardContent>
+            {isSubmitting || !recommendations ? (
+                 <div className="flex flex-col items-center justify-center h-48">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+                    <p className="text-muted-foreground">Generating your recommendations...</p>
+                </div>
+            ) : (
+                <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-center">{recommendations.title}</h3>
+                     {recommendations.recommendations.map((rec, index) => (
+                      <div key={index} className="p-4 border rounded-lg bg-muted/20">
+                        <p className="font-semibold">{rec.topic}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{rec.reason}</p>
+                      </div>
+                    ))}
+                </div>
+            )}
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <Button onClick={resetAssessment}>
+          <CardFooter className="flex-col sm:flex-row justify-center gap-2">
+            <Button onClick={resetAssessment} variant="outline">
               Take a New Assessment
+            </Button>
+            <Button asChild>
+                <Link href="/dashboard">
+                  <Rocket className="mr-2" />
+                  Back to Learning Path
+                </Link>
             </Button>
           </CardFooter>
         </Card>
@@ -187,24 +222,19 @@ export default function AssessmentPage() {
                 <RadioGroup
                   onValueChange={(value) => handleAnswerChange(index, value)}
                   value={userAnswers[index]}
-                  disabled={submitted}
+                  disabled={isSubmitting}
                 >
                   {q.options.map((option) => (
                     <div
                       key={option}
                       className={`flex items-center space-x-2 p-2 rounded-md ${
-                        submitted ? 
-                        (getAnswerStatus(index, option) === 'correct' ? 'bg-green-100' : 
-                         getAnswerStatus(index, option) === 'incorrect' ? 'bg-red-100' : '')
-                        : 'hover:bg-muted/50'
+                        'hover:bg-muted/50'
                       }`}
                     >
                       <RadioGroupItem value={option} id={`${index}-${option}`} />
                       <Label htmlFor={`${index}-${option}`} className="flex-1 cursor-pointer">
                         {option}
                       </Label>
-                       {submitted && getAnswerStatus(index, option) === 'correct' && <CheckCircle className="w-5 h-5 text-green-600" />}
-                       {submitted && getAnswerStatus(index, option) === 'incorrect' && <XCircle className="w-5 h-5 text-red-600" />}
                     </div>
                   ))}
                 </RadioGroup>
@@ -212,7 +242,8 @@ export default function AssessmentPage() {
             ))}
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button onClick={handleSubmit} disabled={submitted}>
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Submit Answers
             </Button>
           </CardFooter>
